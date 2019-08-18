@@ -59,27 +59,12 @@ public class Search extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-//        id;
-//        private String issn;
-//        private String name;
-//        private String press;
-//        private String citescore;
-//        private String hindex;
-//        private String fenqu;
-//        private String bsj;
-//        private String ssj;
-//        private String watch;
-//        private String if2016;
-//        private String if2017;
-//        private String if2018;
-//        private String ifavg;
-//        private String ccf;
-//        private String rank;
+        
         Map map = new HashMap();
         map.put("num", qikans.size());
         for (int i = 0; i < qikans.size(); i++) {
             map.put(String.format("%d-id",i+1),qikans.get(i).getId());
+            map.put(String.format("%d-name",i+1),qikans.get(i).getName());
             map.put(String.format("%d-issn",i+1),qikans.get(i).getIssn());
             map.put(String.format("%d-press",i+1),qikans.get(i).getPress());
             map.put(String.format("%d-citescore",i+1),qikans.get(i).getCitescore());
