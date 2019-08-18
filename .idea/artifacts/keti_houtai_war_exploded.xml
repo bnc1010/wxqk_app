@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="keti_houtai:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/keti_houtai_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="keti_houtai" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="lib" />
+        </element>
+      </element>
+      <element id="library" level="project" name="apidocs" />
+      <element id="javaee-facet-resources" facet="keti_houtai/web/Web" />
+    </root>
+  </artifact>
+</component>

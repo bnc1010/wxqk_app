@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="apidocs">
+    <CLASSES />
+    <JAVADOC>
+      <root url="file://$USER_HOME$/lib-za/commons-fileupload-1.4-bin/apidocs" />
+      <root url="file://$USER_HOME$/lib-za/commons-fileupload-1.4-bin/site/apidocs" />
+      <root url="file://$USER_HOME$/lib-za/commons-io-2.6/docs" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
