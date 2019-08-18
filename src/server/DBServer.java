@@ -62,6 +62,18 @@ public class DBServer {
     }
 
 
+    private String searchName(String where,String id) throws Exception {
+        String sql = "select name from " + where + " where id=?";
+        dbBean.openConnection();
+        ResultSet rs = dbBean.executeQuery(sql,1, id);
+        String ret = "";
+        if(rs.next()){
+            ret = rs.getString("name");
+        }
+        dbBean.closeConnection();
+        return ret;
+    }
+
     public ArrayList<qikanBean> searech(ArrayList<String> parameter) throws Exception {
         StringBuilder sql = new StringBuilder("select * from Periodical where ");
         Object[] paras = new Object[parameter.size() / 2];
@@ -96,10 +108,59 @@ public class DBServer {
             qikan.setCcf(rs.getString("CCF"));
             qikan.setRank(rs.getString("FinalRank"));
             ret.add(qikan);
-//            System.out.println(qikan.getName());
+            System.out.println(qikan.getName());
+        }
+
+        for (int i=0;i<ret.size();i++){
+            qikanBean qikan = ret.get(i);
+            qikan.setPress(searchName("Press", qikan.getPress()));
+            qikan.setBsj(searchName("BigSubjects", qikan.getBsj()));
+            qikan.setPress(searchName("SmSubjects", qikan.getSsj()));
+            ret.set(i, qikan);
+        }
+
+
+        dbBean.closeConnection();
+        return ret;
+    }
+
+    public String getPressId(String press) throws Exception {
+        String sql = "select id from Press where name=?";
+        dbBean.openConnection();
+        ResultSet rs = dbBean.executeQuery(sql,1, press);
+        String ret="-1";
+        if (rs.next()){
+            ret = rs.getString("id");
         }
         dbBean.closeConnection();
         return ret;
     }
+
+
+    public String getbsjId(String bsj) throws Exception {
+        String sql = "select id from BigSubjects where name=?";
+        dbBean.openConnection();
+        ResultSet rs = dbBean.executeQuery(sql,1, bsj);
+        String ret="-1";
+        if (rs.next()){
+            ret = rs.getString("id");
+        }
+        dbBean.closeConnection();
+        return ret;
+    }
+
+
+    public String getssjId(String ssj) throws Exception {
+        String sql = "select id from SmSubjects where name=?";
+        dbBean.openConnection();
+        ResultSet rs = dbBean.executeQuery(sql,1, ssj);
+        String ret="-1";
+        if (rs.next()){
+            ret = rs.getString("id");
+        }
+        dbBean.closeConnection();
+        return ret;
+    }
+
 
 }

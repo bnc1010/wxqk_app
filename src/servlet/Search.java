@@ -44,13 +44,36 @@ public class Search extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int Type = Integer.parseInt(request.getParameter("Type"));
-
+        System.out.print("**new connection**");
         ArrayList<String> parameter = new ArrayList<>();
 
         for (int i = 0; i < paras.length; i++) {
             if (((1 << i) & Type) != 0) {
                 parameter.add(paras[i]);
-                parameter.add(request.getParameter(paras[i]));
+                if (i == 2 ){
+                    try {
+                        parameter.add(dbServer.getPressId(request.getParameter(paras[i])));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if(i == 8){
+                    try {
+                        parameter.add(dbServer.getbsjId(request.getParameter(paras[i])));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if(i == 9){
+                    try {
+                        parameter.add(dbServer.getssjId(request.getParameter(paras[i])));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    parameter.add(request.getParameter(paras[i]));
+                }
             }
         }
         ArrayList<qikanBean> qikans = new ArrayList<>();
@@ -63,6 +86,7 @@ public class Search extends HttpServlet {
         Map map = new HashMap();
         map.put("num", qikans.size());
         for (int i = 0; i < qikans.size(); i++) {
+//            System.out.print(qikans.get(i));
             map.put(String.format("%d-id",i+1),qikans.get(i).getId());
             map.put(String.format("%d-name",i+1),qikans.get(i).getName());
             map.put(String.format("%d-issn",i+1),qikans.get(i).getIssn());
