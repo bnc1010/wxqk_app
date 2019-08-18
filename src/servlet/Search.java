@@ -59,7 +59,7 @@ public class Search extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         Map map = new HashMap();
         map.put("num", qikans.size());
         for (int i = 0; i < qikans.size(); i++) {
