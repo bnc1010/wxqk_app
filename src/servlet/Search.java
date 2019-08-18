@@ -83,33 +83,37 @@ public class Search extends HttpServlet {
             e.printStackTrace();
         }
 
-        Map map = new HashMap();
-        map.put("num", qikans.size());
+
+        StringBuilder ss = new StringBuilder("[");
         for (int i = 0; i < qikans.size(); i++) {
 //            System.out.print(qikans.get(i));
-            map.put(String.format("%d-id",i+1),qikans.get(i).getId());
-            map.put(String.format("%d-name",i+1),qikans.get(i).getName());
-            map.put(String.format("%d-issn",i+1),qikans.get(i).getIssn());
-            map.put(String.format("%d-press",i+1),qikans.get(i).getPress());
-            map.put(String.format("%d-citescore",i+1),qikans.get(i).getCitescore());
-            map.put(String.format("%d-hindex",i+1),qikans.get(i).getHindex());
-            map.put(String.format("%d-fenqu",i+1),qikans.get(i).getFenqu());
-            map.put(String.format("%d-bsj",i+1),qikans.get(i).getBsj());
-            map.put(String.format("%d-ssj",i+1),qikans.get(i).getSsj());
-            map.put(String.format("%d-watch",i+1),qikans.get(i).getWatch());
-            map.put(String.format("%d-if2016",i+1),qikans.get(i).getIf2016());
-            map.put(String.format("%d-if2017",i+1),qikans.get(i).getIf2017());
-            map.put(String.format("%d-if2018",i+1),qikans.get(i).getIf2018());
-            map.put(String.format("%d-ifavg",i+1),qikans.get(i).getIfavg());
-            map.put(String.format("%d-ccf",i+1),qikans.get(i).getCcf());
-            map.put(String.format("%d-rank",i+1),qikans.get(i).getRank());
+            Map map = new HashMap();
+            map.put("id", qikans.get(i).getId());
+            map.put("name", qikans.get(i).getName());
+            map.put("issn", qikans.get(i).getIssn());
+            map.put("press", qikans.get(i).getPress());
+            map.put("citescore", qikans.get(i).getCitescore());
+            map.put("hindex", qikans.get(i).getHindex());
+            map.put("fenqu", qikans.get(i).getFenqu());
+            map.put("bsj", qikans.get(i).getBsj());
+            map.put("ssj", qikans.get(i).getSsj());
+            map.put("watch", qikans.get(i).getWatch());
+            map.put("if2016", qikans.get(i).getIf2016());
+            map.put("if2017", qikans.get(i).getIf2017());
+            map.put("if2018", qikans.get(i).getIf2018());
+            map.put("ifavg", qikans.get(i).getIfavg());
+            map.put("ccf", qikans.get(i).getCcf());
+            map.put("rank", qikans.get(i).getRank());
+            if (i != 0){
+                ss.append(",");
+            }
+            MapToJson mapToJson = new MapToJson();
+            ss.append(mapToJson.write(map));
+            System.out.println(ss);
         }
-
-
-        MapToJson mapToJson = new MapToJson();
-        String ss = mapToJson.write(map);
+        ss.append("]");
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter pw = response.getWriter();
-        pw.write(ss);
+        pw.write(ss.toString());
     }
 }
