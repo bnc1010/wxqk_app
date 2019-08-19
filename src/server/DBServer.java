@@ -2,6 +2,7 @@ package server;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import bean.*;
 import com.mysql.cj.x.protobuf.MysqlxResultset;
@@ -62,13 +63,20 @@ public class DBServer {
     }
 
 
-    private String searchName(String where,String id) throws Exception {
-        String sql = "select name from " + where + " where id=?";
+    private String [] searchName(String pressid,String bsjid,String ssjid) throws Exception {
+        String sql = "select Press.name,BigSubjects.name,SmSubjects.name from Press,BigSubjects,SmSubjects where Press.id=? and BigSubjects.id=? and SmSubjects.id=?;";
         dbBean.openConnection();
-        ResultSet rs = dbBean.executeQuery(sql,1, id);
-        String ret = "";
+        Object [] paras={
+                pressid,
+                bsjid,
+                ssjid
+        };
+        ResultSet rs = dbBean.executeQuery(sql,3, paras);
+        String [] ret =new String[3];
         if(rs.next()){
-            ret = rs.getString("name");
+            ret[0] = rs.getString("Press.name");
+            ret[1] = rs.getString("BigSubjects.name");
+            ret[2] = rs.getString("SmSubjects.name");
         }
         dbBean.closeConnection();
         return ret;
@@ -108,14 +116,17 @@ public class DBServer {
             qikan.setCcf(rs.getString("CCF"));
             qikan.setRank(rs.getString("FinalRank"));
             ret.add(qikan);
-            System.out.println(qikan.getName());
+//            System.out.println(qikan.getName());
         }
 
         for (int i=0;i<ret.size();i++){
             qikanBean qikan = ret.get(i);
-            qikan.setPress(searchName("Press", qikan.getPress()));
-            qikan.setBsj(searchName("BigSubjects", qikan.getBsj()));
-            qikan.setPress(searchName("SmSubjects", qikan.getSsj()));
+
+            String [] names=searchName(qikan.getPress(),qikan.getBsj(),qikan.getSsj());
+
+            qikan.setPress(names[0]);
+            qikan.setBsj(names[1]);
+            qikan.setSsj(names[2]);
             ret.set(i, qikan);
         }
 
@@ -161,6 +172,4 @@ public class DBServer {
         dbBean.closeConnection();
         return ret;
     }
-
-
 }

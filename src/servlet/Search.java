@@ -109,7 +109,7 @@ public class Search extends HttpServlet {
             }
             MapToJson mapToJson = new MapToJson();
             ss.append(mapToJson.write(map));
-            System.out.println(ss);
+//            System.out.println(ss);
         }
         ss.append("]");
         response.setContentType("text/plain;charset=UTF-8");
