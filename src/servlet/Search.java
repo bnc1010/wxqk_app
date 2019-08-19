@@ -18,7 +18,7 @@ import bean.qikanBean;
 
 @WebServlet(name = "Search")
 public class Search extends HttpServlet {
-    String[] paras = {
+    private String[] paras = {
             "ISSN",
             "Name",
             "Press",
@@ -35,7 +35,6 @@ public class Search extends HttpServlet {
             "if_h",
             "CCF"
     };
-
     private DBServer dbServer = new DBServer();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -44,7 +43,7 @@ public class Search extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int Type = Integer.parseInt(request.getParameter("Type"));
-        System.out.print("**new connection**");
+        System.out.println("**new connection**");
         ArrayList<String> parameter = new ArrayList<>();
 
         for (int i = 0; i < paras.length; i++) {
@@ -83,7 +82,7 @@ public class Search extends HttpServlet {
             e.printStackTrace();
         }
 
-
+//        返回对象组装成json
         StringBuilder ss = new StringBuilder("[");
         for (int i = 0; i < qikans.size(); i++) {
 //            System.out.print(qikans.get(i));

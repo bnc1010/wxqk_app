@@ -34,7 +34,7 @@ public class DBServer {
         } else if (para.equals("Name")) {
             return "Name like concat('%',?,'%')";
         } else if (para.equals("Press")) {
-            return "Press like concat('%',?,'%')";
+            return "Press =?";
         } else if (para.equals("cs_l")) {
             return "CiteScore>=" + "?";
         } else if (para.equals("cs_h")) {
@@ -46,9 +46,9 @@ public class DBServer {
         } else if (para.equals("fenqu")) {
             return "fenqu=" + "?";
         } else if (para.equals("BigSubjects")) {
-            return "BigSubjects like concat('%',?,'%')";
+            return "BigSubjects =?";
         } else if (para.equals("SmSubjects")) {
-            return "SmSubjects like concat('%',?,'%')";
+            return "SmSubjects =?";
         } else if (para.equals("watch_l")) {
             return "watch>=" + "?";
         } else if (para.equals("watch_h")) {
@@ -94,6 +94,11 @@ public class DBServer {
             sql.append(getSQL(parameter.get(i)));
             paras[i / 2] = parameter.get(i + 1);
         }
+
+//        暂时控制下记录条数，后期改分页
+        sql.append("limit 0, 3");
+
+
 //        System.out.println(sql);
         dbBean.openConnection();
         ResultSet rs = dbBean.executeQuery(sql.toString(), parameter.size() / 2, paras);
@@ -136,6 +141,7 @@ public class DBServer {
     }
 
     public String getPressId(String press) throws Exception {
+//        Thread.sleep(10);
         String sql = "select id from Press where name=?";
         dbBean.openConnection();
         ResultSet rs = dbBean.executeQuery(sql,1, press);
