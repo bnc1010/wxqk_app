@@ -1,0 +1,23 @@
+<component name="libraryTable">
+  <library name="jars">
+    <CLASSES>
+      <root url="file://$USER_HOME$/lib-za/jars" />
+      <root url="file://$USER_HOME$/lib-za/commons-fileupload-1.4-bin" />
+      <root url="file://$USER_HOME$/lib-za/commons-io-2.6" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$USER_HOME$/lib-za/commons-fileupload-1.4-bin/apidocs" />
+      <root url="file://$USER_HOME$/lib-za/commons-fileupload-1.4-bin/site/apidocs" />
+      <root url="file://$USER_HOME$/lib-za/commons-io-2.6/docs" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$USER_HOME$/lib-za/commons-fileupload-1.4-bin" />
+      <root url="file://$USER_HOME$/lib-za/commons-io-2.6" />
+    </SOURCES>
+    <jarDirectory url="file://$USER_HOME$/lib-za/commons-fileupload-1.4-bin" recursive="false" />
+    <jarDirectory url="file://$USER_HOME$/lib-za/commons-io-2.6" recursive="false" />
+    <jarDirectory url="file://$USER_HOME$/lib-za/jars" recursive="false" />
+    <jarDirectory url="file://$USER_HOME$/lib-za/commons-fileupload-1.4-bin" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$USER_HOME$/lib-za/commons-io-2.6" recursive="false" type="SOURCES" />
+  </library>
+</component>
