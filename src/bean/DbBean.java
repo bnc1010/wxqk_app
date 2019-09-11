@@ -1,5 +1,7 @@
 package bean;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,13 +31,16 @@ public class DbBean {
      */
     public ResultSet executeQuery(String sql, int pnum, Object...paras) throws Exception{
         rs=null;
-//        System.out.println(sql);
         state=conn.prepareStatement(sql);
-        for(int i=0; i<pnum; i++){
-//            System.out.println(paras[i].toString());
-            state.setString(i+1, paras[i].toString());
+        for(int i=0; i<pnum; i+=2){
+            if((Boolean) paras[i]){
+                state.setString(i/2 + 1, paras[i+1].toString());
+            }
+            else{
+                state.setInt(i/2 + 1, Integer.parseInt(paras[i+1].toString()));
+            }
         }
-        rs=state.executeQuery();
+        rs = state.executeQuery();
         return rs;
     }
 

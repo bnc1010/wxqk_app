@@ -1,5 +1,6 @@
 package servlet;
 
+import bean.qikanBean;
 import server.DBServer;
 import server.MapToJson;
 
@@ -14,10 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import bean.qikanBean;
-
-@WebServlet(name = "Search")
-public class Search extends HttpServlet {
+@WebServlet(name = "DividePage")
+public class DividePage extends HttpServlet {
     String[] paras = {
             "ISSN",
             "Name",
@@ -35,19 +34,15 @@ public class Search extends HttpServlet {
             "if_h",
             "CCF"
     };
-
     private DBServer dbServer = new DBServer();
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int Type = Integer.parseInt(request.getParameter("Type"));
-        System.out.print("**new connection**");
+
         ArrayList<String> parameter = new ArrayList<>();
-
-
         for (int i = 0; i < paras.length; i++) {
             if (((1 << i) & Type) != 0) {
                 parameter.add(paras[i]);
@@ -77,47 +72,18 @@ public class Search extends HttpServlet {
                 }
             }
         }
-
-        parameter.add("pageid");
-        parameter.add(request.getParameter("pageid"));
-
-        ArrayList<qikanBean> qikans = new ArrayList<>();
+        int ret = 0;
         try {
-            qikans = dbServer.search(parameter);
+            ret = dbServer.search_sz(parameter);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        MapToJson mapToJson = new MapToJson();
+        Map map = new HashMap();
+        map.put("count",ret);
 
-        StringBuilder ss = new StringBuilder("[");
-        for (int i = 0; i < qikans.size(); i++) {
-//            System.out.print(qikans.get(i));
-            Map map = new HashMap();
-            map.put("id", qikans.get(i).getId());
-            map.put("name", qikans.get(i).getName());
-            map.put("issn", qikans.get(i).getIssn());
-            map.put("press", qikans.get(i).getPress());
-            map.put("citescore", qikans.get(i).getCitescore());
-            map.put("hindex", qikans.get(i).getHindex());
-            map.put("fenqu", qikans.get(i).getFenqu());
-            map.put("bsj", qikans.get(i).getBsj());
-            map.put("ssj", qikans.get(i).getSsj());
-            map.put("watch", qikans.get(i).getWatch());
-            map.put("if2016", qikans.get(i).getIf2016());
-            map.put("if2017", qikans.get(i).getIf2017());
-            map.put("if2018", qikans.get(i).getIf2018());
-            map.put("ifavg", qikans.get(i).getIfavg());
-            map.put("ccf", qikans.get(i).getCcf());
-            map.put("rank", qikans.get(i).getRank());
-            if (i != 0){
-                ss.append(",");
-            }
-            MapToJson mapToJson = new MapToJson();
-            ss.append(mapToJson.write(map));
-//            System.out.println(ss);
-        }
-        ss.append("]");
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter pw = response.getWriter();
-        pw.write(ss.toString());
+        pw.write(mapToJson.write(map));
     }
 }

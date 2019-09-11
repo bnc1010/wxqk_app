@@ -27,45 +27,68 @@ public class DBServer {
     DbBean dbBean = new DbBean();
 
 
-    private String getSQL(String para) {
+    private Object[] getSQL(String para) {
+        Object[] ret = new Object[2];
         if (para.equals("ISSN")) {
-            return "ISSN like concat('%',?,'%')";
+            ret[0]="ISSN like concat('%',?,'%')";
+            ret[1]=true;
         } else if (para.equals("Name")) {
-            return "Name like concat('%',?,'%')";
+            ret[0]="Name like concat('%',?,'%')";
+            ret[1]=true;
         } else if (para.equals("Press")) {
-            return "Press like concat('%',?,'%')";
+            ret[0]="Press like concat('%',?,'%')";
+            ret[1]=true;
         } else if (para.equals("cs_l")) {
-            return "CiteScore>=" + "?";
+            ret[0]="CiteScore >= " + "?";
+            ret[1]=false;
         } else if (para.equals("cs_h")) {
-            return "CiteScore<=" + "?";
+            ret[0]="CiteScore <= " + "?";
+            ret[1]=false;
         } else if (para.equals("hd_l")) {
-            return "hindex>=" + "?";
+            ret[0]="hindex >= " + "?";
+            ret[1]=false;
         } else if (para.equals("hd_h")) {
-            return "hindex<=" + "?";
+            ret[0]="hindex <= " + "?";
+            ret[1]=false;
         } else if (para.equals("fenqu")) {
-            return "fenqu=" + "?";
+            ret[0]="fenqu=" + "?";
+            ret[1]=false;
         } else if (para.equals("BigSubjects")) {
-            return "BigSubjects like concat('%',?,'%')";
+            ret[0]="BigSubjects like concat('%',?,'%')";
+            ret[1]=true;
         } else if (para.equals("SmSubjects")) {
-            return "SmSubjects like concat('%',?,'%')";
+            ret[0]="SmSubjects like concat('%',?,'%')";
+            ret[1]=true;
         } else if (para.equals("watch_l")) {
-            return "watch>=" + "?";
+            ret[0]= "watch>=" + "?";
+            ret[1]=false;
         } else if (para.equals("watch_h")) {
-            return "watch<=" + "?";
+            ret[0]= "watch<=" + "?";
+            ret[1]=false;
         } else if (para.equals("if_l")) {
-            return "IFAVG>=" + "?";
+            ret[0]= "IFAVG>=" + "?";
+            ret[1]=false;
         } else if (para.equals("if_h")) {
-            return "IFAVG<=" + "?";
+            ret[0]= "IFAVG<=" + "?";
+            ret[1]=false;
+        } else if(para.equals("pageid")) {
+            ret[0]= " limit ?, 6 ";
+            ret[1]=false;
         } else {
-            return "CCF=" + "?";
+            ret[0]= "CCF=" + "?";
+            ret[1]=true;
         }
+        return ret;
     }
 
 
     private String searchName(String where,String id) throws Exception {
         String sql = "select name from " + where + " where id=?";
         dbBean.openConnection();
-        ResultSet rs = dbBean.executeQuery(sql,1, id);
+        Object [] tp = new Object[2];
+        tp[0]=true;
+        tp[1]=id;
+        ResultSet rs = dbBean.executeQuery(sql,2, tp);
         String ret = "";
         if(rs.next()){
             ret = rs.getString("name");
@@ -74,21 +97,23 @@ public class DBServer {
         return ret;
     }
 
-    public ArrayList<qikanBean> searech(ArrayList<String> parameter) throws Exception {
+    public ArrayList<qikanBean> search(ArrayList<String> parameter) throws Exception {
         StringBuilder sql = new StringBuilder("select * from Periodical where ");
-        Object[] paras = new Object[parameter.size() / 2];
-//        System.out.println(parameter.size());
+        Object[] paras = new Object[parameter.size()];
         for (int i = 0; i < parameter.size(); i += 2) {
-//            System.out.println(parameter.get(i) + parameter.get(i+1));
-            if (i != 0) {
+            if (i != 0 && i < parameter.size() - 3) {
                 sql.append(" and ");
             }
-            sql.append(getSQL(parameter.get(i)));
-            paras[i / 2] = parameter.get(i + 1);
+            Object [] tmp = getSQL(parameter.get(i));
+            paras[i] = tmp[1];
+            sql.append(tmp[0]);
+            paras[i+1] = parameter.get(i+1);
         }
+        sql.append(" ");
+        paras[parameter.size() - 1] = (Integer.parseInt(parameter.get(parameter.size()-1))-1)*6;
 //        System.out.println(sql);
         dbBean.openConnection();
-        ResultSet rs = dbBean.executeQuery(sql.toString(), parameter.size() / 2, paras);
+        ResultSet rs = dbBean.executeQuery(sql.toString(), parameter.size(), paras);
         ArrayList<qikanBean> ret = new ArrayList<>();
         while (rs.next()) {
             qikanBean qikan = new qikanBean();
@@ -108,7 +133,6 @@ public class DBServer {
             qikan.setCcf(rs.getString("CCF"));
             qikan.setRank(rs.getString("FinalRank"));
             ret.add(qikan);
-            System.out.println(qikan.getName());
         }
 
         for (int i=0;i<ret.size();i++){
@@ -124,10 +148,36 @@ public class DBServer {
         return ret;
     }
 
+    public int search_sz(ArrayList<String> parameter) throws Exception {
+        StringBuilder sql = new StringBuilder("select count(*) from Periodical where ");
+        Object[] paras = new Object[parameter.size()];
+        for (int i = 0; i < parameter.size(); i += 2) {
+            if (i != 0) {
+                sql.append(" and ");
+            }
+            Object [] tmp = getSQL(parameter.get(i));
+            paras[i] =  tmp[1];
+            sql.append(tmp[0]);
+            paras[i+1] = parameter.get(i+1);
+        }
+        dbBean.openConnection();
+        ResultSet rs = dbBean.executeQuery(sql.toString(), parameter.size(), paras);
+        int ret=-1;
+        if (rs.next()){
+            ret=rs.getInt("count(*)");
+        }
+        dbBean.closeConnection();
+        return ret;
+    }
+
+
     public String getPressId(String press) throws Exception {
         String sql = "select id from Press where name=?";
         dbBean.openConnection();
-        ResultSet rs = dbBean.executeQuery(sql,1, press);
+        Object[] tp = new Object[2];
+        tp[0] = true;
+        tp[1] =press;
+        ResultSet rs = dbBean.executeQuery(sql,2, tp);
         String ret="-1";
         if (rs.next()){
             ret = rs.getString("id");
@@ -140,7 +190,10 @@ public class DBServer {
     public String getbsjId(String bsj) throws Exception {
         String sql = "select id from BigSubjects where name=?";
         dbBean.openConnection();
-        ResultSet rs = dbBean.executeQuery(sql,1, bsj);
+        Object[] tp = new Object[2];
+        tp[0] = true;
+        tp[1] =bsj;
+        ResultSet rs = dbBean.executeQuery(sql,2, tp);
         String ret="-1";
         if (rs.next()){
             ret = rs.getString("id");
@@ -153,7 +206,10 @@ public class DBServer {
     public String getssjId(String ssj) throws Exception {
         String sql = "select id from SmSubjects where name=?";
         dbBean.openConnection();
-        ResultSet rs = dbBean.executeQuery(sql,1, ssj);
+        Object[] tp = new Object[2];
+        tp[0] = true;
+        tp[1] =ssj;
+        ResultSet rs = dbBean.executeQuery(sql,2, tp);
         String ret="-1";
         if (rs.next()){
             ret = rs.getString("id");
