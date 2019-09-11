@@ -19,7 +19,7 @@ public class DbBean {
     public void openConnection() throws Exception{
         String driver = "com.mysql.jdbc.Driver";
         Class.forName(driver);
-        String url="jdbc:mysql://missyy.club:3306/keti_wxqk_app?characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&maxReconnects=10";
+        String url="jdbc:mysql://missyy.club:3306/keti_wxqk_app?&autoReconnect=true&failOverReadOnly=false&maxReconnects=10";
         String user="bnc";
         String pwd="ze!15958231764";
         conn= DriverManager.getConnection(url, user, pwd);
@@ -31,6 +31,7 @@ public class DbBean {
      */
     public ResultSet executeQuery(String sql, int pnum, Object...paras) throws Exception{
         rs=null;
+//        System.out.println(sql);
         state=conn.prepareStatement(sql);
         for(int i=0; i<pnum; i+=2){
             if((Boolean) paras[i]){
